@@ -1,14 +1,13 @@
-package com.eipusino.jabel;
+package jabel;
 
-import com.sun.source.util.*;
-import com.sun.tools.javac.code.*;
-import com.sun.tools.javac.code.Source.*;
+import com.sun.source.util.JavacTask;
+import com.sun.source.util.Plugin;
+import com.sun.tools.javac.code.Source;
+import com.sun.tools.javac.code.Source.Feature;
 
-import java.lang.invoke.*;
-import java.lang.invoke.MethodHandles.*;
-import java.lang.reflect.*;
-
-import static com.sun.tools.javac.code.Source.Feature.*;
+import java.lang.invoke.MethodHandle;
+import java.lang.invoke.MethodHandles.Lookup;
+import java.lang.reflect.Field;
 
 /**
  * Makes users able to use Java 9+ syntactic-sugars while still targeting Java 8.
@@ -26,21 +25,21 @@ public class JabelCompilerPlugin implements Plugin {
             MethodHandle set = lookup.findSetter(Feature.class, "minLevel", Source.class);
 
             // Downgrade most Java 8-compatible features.
-            for (Feature feature : new Feature[] {
-                    EFFECTIVELY_FINAL_VARIABLES_IN_TRY_WITH_RESOURCES,
-                    PRIVATE_SAFE_VARARGS,
-                    DIAMOND_WITH_ANONYMOUS_CLASS_CREATION,
-                    LOCAL_VARIABLE_TYPE_INFERENCE,
-                    VAR_SYNTAX_IMPLICIT_LAMBDAS,
-                    SWITCH_MULTIPLE_CASE_LABELS,
-                    SWITCH_RULE,
-                    SWITCH_EXPRESSION,
-                    TEXT_BLOCKS,
-                    PATTERN_MATCHING_IN_INSTANCEOF,
-                    REIFIABLE_TYPES_INSTANCEOF
+            for (Feature feature : new Feature[]{
+		            Feature.EFFECTIVELY_FINAL_VARIABLES_IN_TRY_WITH_RESOURCES,
+		            Feature.PRIVATE_SAFE_VARARGS,
+		            Feature.DIAMOND_WITH_ANONYMOUS_CLASS_CREATION,
+		            Feature.LOCAL_VARIABLE_TYPE_INFERENCE,
+		            Feature.VAR_SYNTAX_IMPLICIT_LAMBDAS,
+		            Feature.SWITCH_MULTIPLE_CASE_LABELS,
+		            Feature.SWITCH_RULE,
+		            Feature.SWITCH_EXPRESSION,
+		            Feature.TEXT_BLOCKS,
+		            Feature.PATTERN_MATCHING_IN_INSTANCEOF,
+		            Feature.REIFIABLE_TYPES_INSTANCEOF
             }) set.invokeExact(feature, Source.JDK8);
-        } catch (Throwable t) {
-            throw new RuntimeException(t);
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
         }
     }
 
